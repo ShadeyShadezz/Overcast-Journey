@@ -1,0 +1,14 @@
+X X - DOC MDS/
+
+# Ignore Node.js dependencies
+# ignore node_modules at repo root and in any subfolder
+node_modules/
+**/node_modules/
+
+# explicit common folders
+client/node_modules/
+server/node_modules/
+
+# built client output
+client/dist/
+
