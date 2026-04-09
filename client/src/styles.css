@@ -43,3 +43,9 @@ footer{text-align:center;margin-top:10px;opacity:0.6}
 .fileTitle{font-weight:600;margin-bottom:8px}
 .fileList{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto}
 .lobbyActions{margin-top:12px;display:flex;justify-content:flex-end}
+.hero{display:flex;align-items:center;gap:16px}
+.heroImg{width:120px;height:120px;border-radius:12px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
+.heroText h1{margin:0 0 6px 0}
+.roomCode{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:6px}
+.fileCard .fileTitle{display:flex;align-items:center;gap:8px}
+.fileCard .fileTitle img{width:36px;height:36px;border-radius:6px;object-fit:cover}

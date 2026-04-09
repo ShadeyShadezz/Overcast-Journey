@@ -9,6 +9,11 @@ function genRoomCode() {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
+function asset(name) {
+  // serve images from repository path; encode for URL
+  return encodeURI(`/X X - DOC MDS/${name}`)
+}
+
 export default function App() {
   const [files, setFiles] = useState([])
   const [sendProgress, setSendProgress] = useState([]) // {name,size,sent,percent,speed,eta,status}
@@ -236,8 +241,11 @@ export default function App() {
   return (
     <div className="app" onDragOver={(e)=>e.preventDefault()} onDrop={onDrop}>
       <header className="hero">
-        <h1>Your files, directly to anyone. No servers, no limits.</h1>
-        <p>Drop files anywhere on this page to add them.</p>
+        <img src={asset('Home Menu.png')} alt="home design" className="heroImg" />
+        <div className="heroText">
+          <h1>Your files, directly to anyone. No servers, no limits.</h1>
+          <p>Drop files anywhere on this page to add them.</p>
+        </div>
       </header>
       <main>
         {mode === 'home' && (
@@ -302,7 +310,33 @@ export default function App() {
                     <button onClick={()=>{ setMode('home') }}>Back</button>
                     <button onClick={async ()=>{
                       // Start WS, claim room and begin sender flow
-                      await startSender()
+                      // if room was created on server, claim it via ws create
+                      if (room) {
+                        // start a sender but use the existing room code
+                        // reuse startSender flow but ensure it uses the existing room
+                        // simplified: create ws and send create with existing room
+                        if (!files.length) return alert('Add files first')
+                        setSendProgress(files.map(f=>({ name: f.name, size: f.size, sent: 0, percent: 0, speed: 0, eta: null, status: 'pending' })))
+                        wsRef.current = new WebSocket(SIGNAL_SERVER)
+                        wsRef.current.onopen = () => { wsRef.current.send(JSON.stringify({ type: 'create', room })) }
+                        wsRef.current.onmessage = async (ev) => {
+                          const msg = JSON.parse(ev.data)
+                          if (msg.type === 'peer-joined') {
+                            const { pc, dc } = createSender()
+                            pcRef.current = pc
+                            dcRef.current = dc
+                            dc.onopen = () => { setStatus('connected'); sendFilesOverDataChannel(dc, files) }
+                            pc.onicecandidate = (e) => { if (e.candidate) wsRef.current.send(JSON.stringify({ type: 'signal', room, payload:{ candidate: e.candidate } })) }
+                            const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+                            wsRef.current.send(JSON.stringify({ type: 'signal', room, payload: { sdp: pc.localDescription } }))
+                          }
+                          if (msg.type === 'signal') {
+                            const payload = msg.payload
+                            if (payload.sdp) await pcRef.current.setRemoteDescription(payload.sdp)
+                            if (payload.candidate) { try { await pcRef.current.addIceCandidate(payload.candidate) } catch(e){} }
+                          }
+                        }
+                      }
                       setMode('transfer')
                     }} style={{marginLeft:8}}>Start Transfer</button>
                   </div>
