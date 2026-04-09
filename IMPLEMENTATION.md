@@ -134,6 +134,37 @@ Localhost limitation and making rooms public
 
 Once hosted publicly the generated QR and share links will point to the public domain, allowing other users to scan/join and perform transfers.
 
+Docker & CI/CD
+---------------
+This repo includes a Dockerfile and a `docker-compose.yml` to run OvercastJourney in a containerized environment, plus a GitHub Actions workflow that builds the client, builds a Docker image, and pushes it to GitHub Container Registry (`ghcr.io`).
+
+Files added
+- `Dockerfile` — multi-stage build: builds the Vite client and produces a runtime image that contains `server/` and the built `client/dist` assets.
+- `docker-compose.yml` — quick local deployment of the app and an optional `coturn` service for TURN relay.
+- `.dockerignore` — excludes local artifacts from Docker context.
+- `.github/workflows/ci.yml` — CI which builds the client and pushes a Docker image to `ghcr.io/${{ github.repository }}:latest` on pushes to `main`.
+
+Quick Docker usage
+1. Build locally:
+  ```bash
+  docker build -t overcastjourney:local .
+  ```
+2. Run with docker:
+  ```bash
+  docker run -p 8080:8080 overcastjourney:local
+  ```
+3. Or use docker-compose (also starts optional coturn):
+  ```bash
+  docker-compose up --build
+  ```
+
+CI notes
+- The workflow uses the `GITHUB_TOKEN` to push to GitHub Container Registry. You can change the workflow to push to Docker Hub or another registry by updating the login and `tags` values and providing appropriate secrets.
+
+Exposing to the public
+- To make rooms accessible by other users, run the Docker container on a host with a public IP or behind a reverse proxy (Nginx) with TLS (Let's Encrypt). Update DNS to point to the host and ensure ports `80/443` (HTTP/HTTPS) and `3478`/`49152-65535` (for TURN UDP) are open if using coturn.
+
+
 Git ignore and `node_modules` cleanup
 ------------------------------------
 - The repository `.gitignore` now explicitly ignores Node.js dependency folders at the repository root and in subfolders. Patterns added include:
