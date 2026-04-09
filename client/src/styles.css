@@ -1,0 +1,45 @@
+:root{--bg:#0F172A;--surface:#1E293B;--text:#F1F5F9;--accent:#F97316}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial}
+.app{max-width:1000px;margin:32px auto;padding:20px}
+.hero{text-align:center;margin-bottom:20px}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:16px;border-radius:8px;margin-bottom:16px}
+.dropzone{min-height:120px;border:2px dashed rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:6px}
+.file{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:rgba(255,255,255,0.02);border-radius:6px}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+button{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
+input{padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text)}
+.empty{opacity:0.6}
+.status{margin-top:8px}
+footer{text-align:center;margin-top:10px;opacity:0.6}
+.share{margin-top:12px}
+.linkRow{display:flex;gap:8px;align-items:center}
+.qr{width:128px;height:128px;margin-top:8px;border-radius:8px}
+
+.progressList{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.fileProgress{background:rgba(255,255,255,0.02);padding:8px;border-radius:6px}
+.fileRow{display:flex;justify-content:space-between;align-items:center}
+.fname{font-size:0.95rem}
+.fmeta{opacity:0.8;font-size:0.85rem}
+.bar{height:8px;background:rgba(255,255,255,0.04);border-radius:6px;margin-top:8px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,var(--accent),#ffb88c);width:0}
+
+.uploader{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.fileInput{color:transparent}
+.fileInputLabel{display:inline-block;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,0.03);cursor:pointer}
+.debug{margin-top:12px}
+.debugRow{display:flex;flex-direction:column;gap:6px}
+.functionsList{margin-top:8px}
+.functionsList ul{margin:6px 0 0 18px}
+
+.lobby{padding:18px}
+.lobbyInner{display:flex;gap:16px}
+.hostPanel{flex:1}
+.filePanel{flex:2}
+.hostCard{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;display:flex;flex-direction:column;gap:10px}
+.hostTitle{opacity:0.8}
+.hostName{font-size:1.2rem;font-weight:600}
+.hostActions{display:flex;gap:8px;align-items:center}
+.fileCard{background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+.fileTitle{font-weight:600;margin-bottom:8px}
+.fileList{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto}
+.lobbyActions{margin-top:12px;display:flex;justify-content:flex-end}
