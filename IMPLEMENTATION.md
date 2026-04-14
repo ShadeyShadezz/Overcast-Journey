@@ -39,6 +39,55 @@ Deployment notes
   VITE_ICE_SERVERS='[{"urls":"stun:stun.l.google.com:19302"},{"urls":"turn:turn.example.com","username":"user","credential":"pass"}]' npm run build
   ```
 
+### Running with Docker (detached)
+
+For a local, detached containerized run (server + client served by the server image):
+
+```bash
+docker-compose build --pull --no-cache
+docker-compose up -d
+```
+
+Check logs with:
+
+```bash
+docker-compose logs -f app
+```
+
+To stop and remove containers:
+
+```bash
+docker-compose down
+```
+
+### Deploying the client to Vercel (static)
+
+This repository includes a `vercel.json` that instructs Vercel to build the `client` package and serve `client/dist` as a static site. To deploy the client only:
+
+1. Install the Vercel CLI: `npm i -g vercel`.
+2. From the repo root run: `vercel --prod` and follow prompts (set the root project to `client` when asked).
+
+Note: Vercel will host the static client. The signaling server must be hosted separately (Docker, Render, DigitalOcean, etc.) and its URL set in `VITE_SIGNALING_URL`.
+
+### coturn / TURN service (optional)
+
+The included `docker-compose.yml` contains an example `coturn` service but it is placed in its own compose profile so it does not start by default. This keeps `docker compose up` lightweight — the TURN relay can be started only when you need it.
+
+- Start only the app (fast):
+
+```bash
+docker compose up -d
+```
+
+- Start the app plus coturn (when you've configured TURN users/credentials):
+
+```bash
+docker compose --profile coturn up -d
+```
+
+Notes:
+- The coturn service can be heavy because of the large UDP port range (`49152-65535`) commonly used for relayed traffic. In `docker-compose.yml` that UDP range is commented out by default — enable it only if you plan to use coturn as a full relay.
+- Making coturn optional prevents the `overcastjourney-coturn-1` container from being created/started unless explicitly requested, improving default startup time and resource usage.
 These changes prioritize making the app public and reachable by another user while improving NAT traversal configurability and mobile pairing UX.
 
 TURN example and explanation

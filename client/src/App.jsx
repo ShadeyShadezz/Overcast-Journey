@@ -21,6 +21,7 @@ export default function App() {
   const [totalSize, setTotalSize] = useState(0)
   const [mode, setMode] = useState('home') // 'home' | 'lobby' | 'transfer'
   const [hostName, setHostName] = useState('You')
+  const [participants, setParticipants] = useState([]) // [{name,role,id}]
   const [room, setRoom] = useState('')
   const [status, setStatus] = useState('idle')
   const wsRef = useRef(null)
@@ -47,12 +48,22 @@ export default function App() {
     wsRef.current = new WebSocket(SIGNAL_SERVER)
     wsRef.current.onopen = () => {
       wsRef.current.send(JSON.stringify({ type: 'create', room: roomCode }))
+      // initialize participants for a local-created room
+      setParticipants([{ name: hostName || 'Host', role: 'host', id: 0 }])
+      setMode('room')
     }
     wsRef.current.onmessage = async (ev) => {
       const msg = JSON.parse(ev.data)
       if (msg.type === 'created') setStatus('waiting')
       if (msg.type === 'peer-joined') {
         setStatus('connecting')
+        // a peer joined the room; add a USER entry if below cap
+        setParticipants(prev=>{
+          const users = prev.filter(p=>p.role!=='user')
+          const userCount = prev.filter(p=>p.role==='user').length
+          if (userCount >= 99) return prev
+          return [...users, ...Array.from({length:userCount}, (_,i)=>({name:`USER${i+1}`,role:'user',id:i+1})), { name: `USER${userCount+1}`, role: 'user', id: userCount+1 }]
+        })
         const { pc, dc } = createSender()
         pcRef.current = pc
         dcRef.current = dc
@@ -94,6 +105,8 @@ export default function App() {
         setRoom(body.room)
         // claim room via WebSocket create once connected (sender will call create)
         setMode('lobby')
+        // set initial participants with host
+        setParticipants([{ name: hostName || 'Host', role: 'host', id: 0 }])
         // generate shareable link and QR for lobby
         try {
           const link = `${window.location.origin}?room=${body.room}`
@@ -115,6 +128,11 @@ export default function App() {
     wsRef.current.onmessage = async (ev) => {
       const msg = JSON.parse(ev.data)
       if (msg.type === 'joined') setStatus('joined')
+      if (msg.type === 'joined') {
+        // when joining, show room UI and list host + this user
+        setParticipants([{ name: 'Host', role: 'host', id: 0 }, { name: 'USER1', role: 'user', id: 1 }])
+        setMode('room')
+      }
       if (msg.type === 'signal') {
         const payload = msg.payload
         if (payload.sdp) {
@@ -241,7 +259,7 @@ export default function App() {
   return (
     <div className="app" onDragOver={(e)=>e.preventDefault()} onDrop={onDrop}>
       <header className="hero">
-        <img src={asset('Home Menu.png')} alt="home design" className="heroImg" />
+        <div className="brand">🌧️🌐 Overcast Journey</div>
         <div className="heroText">
           <h1>Your files, directly to anyone. No servers, no limits.</h1>
           <p>Drop files anywhere on this page to add them.</p>
@@ -253,25 +271,30 @@ export default function App() {
             <h2>Sender</h2>
           <div className="dropzone">{files.length ? files.map((f,i)=>(
             <div key={i} className="file">
-              <div>{f.name}</div>
-              <div>{(f.size/1024).toFixed(1)} KB</div>
-              <button onClick={()=>removeFile(i)}>Remove</button>
+              <div className="fileMeta">
+                <div className="fileName">{f.name}</div>
+                <div className="fileSize">{(f.size/1024).toFixed(1)} KB</div>
+              </div>
+              <button className="removeBtn" onClick={()=>removeFile(i)} aria-label={`Remove ${f.name}`}>✖</button>
             </div>
           )) : <div className="empty">Drop files here</div>}</div>
           <div className="uploader">
-            <label className="fileInputLabel">Or choose files</label>
-            <input className="fileInput" type="file" multiple onChange={(e)=>{ const list = Array.from(e.target.files); setFiles(prev=>[...prev,...list]) }} />
+            <input id="fileInput" className="fileInput" type="file" multiple onChange={(e)=>{ const list = Array.from(e.target.files); setFiles(prev=>[...prev,...list]) }} />
+            <label htmlFor="fileInput" className="chooseButton">Choose files</label>
+            <div className="uploaderNote">or drag & drop files onto the page</div>
           </div>
             <div className="actions">
               <div>Total: {(totalSize/1024).toFixed(1)} KB</div>
-              <button onClick={startSender}>Generate Transfer (local)</button>
-              <button onClick={createRoomServer} style={{marginLeft:8}}>Create Room (Server)</button>
+              <div className="actionButtons">
+                <button onClick={startSender}>Generate Transfer (local)</button>
+                <button onClick={createRoomServer} className="secondary">Create Room (Server)</button>
+              </div>
             </div>
           {shareLink && (
             <div className="share">
               <label>Shareable link</label>
               <div className="linkRow">
-                <input value={shareLink} readOnly />
+                <input className="shareInput" value={shareLink} readOnly />
                 <button onClick={()=>navigator.clipboard.writeText(shareLink)}>Copy</button>
               </div>
               {qrDataUrl && <img src={qrDataUrl} alt="QR code" className="qr" />}
@@ -342,6 +365,42 @@ export default function App() {
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
+        )}
+        )}
+
+        {mode === 'room' && (
+          <section className="panel roomView">
+            <h2>Room {room}</h2>
+            <div className="roomInner">
+              <aside className="participants">
+                <div className="partTitle">People in room</div>
+                <div className="partList">
+                  {participants.length? participants.map((p,i)=> (
+                    <div key={i} className={`partItem ${p.role==='host'?'host':''}`}>
+                      <div className="pname">{p.name}</div>
+                      <div className="prole">{p.role==='host'?'Host':p.name.startsWith('USER')?p.name:'User'}</div>
+                    </div>
+                  )) : <div className="empty">No participants</div>}
+                </div>
+              </aside>
+
+              <section className="roomFiles">
+                <div className="fileGrid">
+                  {files.length? files.map((f,i)=> (
+                    <div className="fileCardPreview" key={i}>
+                      <div className="thumb">
+                        {f.type && f.type.startsWith('image/') ? <img src={URL.createObjectURL(f)} alt={f.name} /> : <img src={asset('Incoming File.png')} alt="file"/>}
+                      </div>
+                      <div className="finfo">
+                        <div className="fname">{f.name}</div>
+                        <div className="fsize">{(f.size/1024).toFixed(1)} KB</div>
+                      </div>
+                    </div>
+                  )) : <div className="empty">No files selected</div>}
+                </div>
+              </section>
             </div>
           </section>
         )}

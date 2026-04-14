@@ -13,21 +13,18 @@ RUN npm ci --legacy-peer-deps
 # copy sources
 COPY . .
 
-# build client
-RUN npm run build:client
-
 FROM node:18-alpine AS runtime
 WORKDIR /app
 
-# copy server package.json and install runtime deps
-COPY server/package.json server/package-lock.json ./server/
+# copy server package.json and install runtime deps (no per-package lockfile)
+COPY server/package.json ./server/
 WORKDIR /app/server
-RUN npm ci --production --legacy-peer-deps
+# use npm install when package-lock.json is not present in the server folder
+RUN npm install --production --legacy-peer-deps
 
 # copy server and built client dist
 WORKDIR /app
 COPY --from=builder /app/server /app/server
-COPY --from=builder /app/client/dist /app/client/dist
 
 ENV PORT=8080
 EXPOSE 8080

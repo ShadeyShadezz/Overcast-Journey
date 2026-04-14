@@ -12,3 +12,6 @@ server/node_modules/
 # built client output
 client/dist/
 
+#env
+.env 
+

@@ -5,7 +5,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui
 .panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:16px;border-radius:8px;margin-bottom:16px}
 .dropzone{min-height:120px;border:2px dashed rgba(255,255,255,0.06);display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:6px}
 .file{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:rgba(255,255,255,0.02);border-radius:6px}
-.actions{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.dropzone:hover{border-color:rgba(249,115,22,0.7);background:linear-gradient(180deg,rgba(249,115,22,0.02),transparent)}
+.file{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:8px;transition:transform .12s ease,box-shadow .12s ease}
+.file:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.45)}
+.fileMeta{display:flex;flex-direction:column;gap:4px}
+.fileName{font-weight:600}
+.fileSize{opacity:0.85;font-size:0.9rem}
+.removeBtn{background:transparent;border:none;color:rgba(255,255,255,0.8);cursor:pointer;font-size:1rem;padding:6px;border-radius:6px}
+.removeBtn:hover{background:rgba(255,255,255,0.02)}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
 button{background:var(--accent);border:none;color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
 input{padding:8px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text)}
 .empty{opacity:0.6}
@@ -23,9 +31,12 @@ footer{text-align:center;margin-top:10px;opacity:0.6}
 .bar{height:8px;background:rgba(255,255,255,0.04);border-radius:6px;margin-top:8px;overflow:hidden}
 .fill{height:100%;background:linear-gradient(90deg,var(--accent),#ffb88c);width:0}
 
-.uploader{margin-top:8px;display:flex;flex-direction:column;gap:6px}
-.fileInput{color:transparent}
+.uploader{margin-top:12px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.fileInput{position:absolute;left:-9999px;opacity:0;pointer-events:none}
 .fileInputLabel{display:inline-block;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,0.03);cursor:pointer}
+.chooseButton{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--accent),#ffb88c);padding:10px 14px;border-radius:10px;color:#fff;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.55);cursor:pointer;border:none}
+.chooseButton:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,0.5)}
+.uploaderNote{margin-top:6px;opacity:0.8;font-size:0.95rem}
 .debug{margin-top:12px}
 .debugRow{display:flex;flex-direction:column;gap:6px}
 .functionsList{margin-top:8px}
@@ -43,9 +54,51 @@ footer{text-align:center;margin-top:10px;opacity:0.6}
 .fileTitle{font-weight:600;margin-bottom:8px}
 .fileList{display:flex;flex-direction:column;gap:8px;max-height:320px;overflow:auto}
 .lobbyActions{margin-top:12px;display:flex;justify-content:flex-end}
-.hero{display:flex;align-items:center;gap:16px}
+.hero{display:flex;align-items:center;gap:16px;justify-content:center;padding:18px 0}
 .heroImg{width:120px;height:120px;border-radius:12px;object-fit:cover;box-shadow:0 6px 18px rgba(0,0,0,0.4)}
 .heroText h1{margin:0 0 6px 0}
+.heroText{max-width:720px;text-align:center}
+.panel{transition:box-shadow .12s ease,transform .12s ease}
+.panel:hover{box-shadow:0 12px 36px rgba(0,0,0,0.45);transform:translateY(-4px)}
+.shareInput{min-width:240px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);color:var(--text)}
+.footerSmall{font-size:0.9rem;opacity:0.7}
+
+/* Decorative borders and improved title styles */
+.panel{border:1px solid rgba(255,255,255,0.03);box-shadow:none}
+.panel h2{margin:0 0 12px 0;padding:0;font-size:1.05rem;border-bottom:1px dashed rgba(255,255,255,0.03);padding-bottom:10px}
+.roomView h2{display:flex;align-items:center;gap:12px}
+.roomView .roomInner{padding:10px}
+.hostCard, .fileCard, .participants, .roomFiles{border:1px solid rgba(255,255,255,0.02)}
+.linkRow input{border-radius:6px}
+
+/* Tidy receiver form */
+.join{display:flex;gap:8px;align-items:center}
+.join input{min-width:160px}
+.join button{padding:8px 12px}
+
+/* Hide stray small orphan text nodes if present (safety) */
+.app > .orphan { display:none }
 .roomCode{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:6px}
 .fileCard .fileTitle{display:flex;align-items:center;gap:8px}
 .fileCard .fileTitle img{width:36px;height:36px;border-radius:6px;object-fit:cover}
+
+.brand{font-weight:700;font-size:1.2rem}
+.actionButtons{display:flex;gap:8px}
+.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+
+.roomView{padding:14px}
+.roomInner{display:flex;gap:18px}
+.participants{width:220px;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px}
+.partTitle{font-weight:700;margin-bottom:8px}
+.partList{display:flex;flex-direction:column;gap:8px}
+.partItem{display:flex;justify-content:space-between;align-items:center;padding:8px;background:rgba(255,255,255,0.01);border-radius:6px}
+.partItem.host{background:linear-gradient(90deg,rgba(249,115,22,0.12),rgba(255,184,140,0.03))}
+.pname{font-weight:600}
+.prole{opacity:0.75;font-size:0.85rem}
+.roomFiles{flex:1}
+.fileGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.fileCardPreview{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;display:flex;flex-direction:column;gap:8px;align-items:center}
+.fileCardPreview .thumb{width:120px;height:90px;background:rgba(255,255,255,0.02);display:flex;align-items:center;justify-content:center;border-radius:6px;overflow:hidden}
+.fileCardPreview .thumb img{width:100%;height:100%;object-fit:cover}
+.finfo{width:100%;text-align:center}
+.fsize{opacity:0.8;font-size:0.85rem}

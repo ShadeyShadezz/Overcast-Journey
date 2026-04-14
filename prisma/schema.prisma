@@ -1,0 +1,27 @@
+// Prisma schema for OvercastJourney P2P signaling DB
+// Purpose: Anon uniqueness (room codes), future provenance tracking (origin hash chain).
+// No user accounts—maintains anonymity.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id        String   @id @default(cuid())
+  code      String   @unique // 6-8 digit room code
+  createdAt DateTime @default(now())
+  expiresAt DateTime? // Optional expiry
+  metadata  Json?    // Anon sender hash, file hashes for blockchain provenance prep (track origin via transfers)
+  peers     Int      @default(0) // Active peer count (signaling)
+
+  @@map("rooms")
+}
+
+// Index for fast code lookup
+index code on Room(code)
+
