@@ -3,12 +3,9 @@
 **Tagline: Your files, directly to anyone. No servers, no limits. End-to-end encrypted.**
 
 ## Overview & Problem Statement
+ 
 
-People often rely on cloud storage services and messaging apps to share files, which require uploads, storage limits, and third-party servers. This makes file sharing slower, less private, and sometimes restricted by file size limits. 
-
-**OvercastJourney (OCJ)** solves this with direct peer-to-peer (P2P) file transfers using WebRTC. Files never touch servers—just pure P2P. Unlimited size, full privacy, faster speeds. Fully anonymous—no accounts required.
-
-![Home Menu](X X - DOC MDS/Home Menu.png)
+**OvercastJourney (OCJ)** People often rely on cloud storage services and messaging apps to share files, which require uploads, storage limits, and third-party servers. This makes file sharing slower, less private, and sometimes restricted by file size limits. Our app, OvercastJourney, enables direct peer-to-peer file transfers with no servers, no limits, and full end-to-end encryption, giving users a faster and more private experience.
 
 ## Who Will Use This App?
 
@@ -18,7 +15,8 @@ People often rely on cloud storage services and messaging apps to share files, w
 - **Mobile User**: QR-based transfers.
 
 **Key Questions Answered:**
-- **Who logs in?** Most don't (anonymous primary). 
+- **Who logs in?** No one—fully anonymous (no user accounts).
+- **Data tracking?** Transfers tracked via room metadata hashes (file/chain provenance for abuse prevention/TOS compliance/security/legal), not users. See Prisma schema.
 - **Who adds files?** Sender uploads/selects.
 - **Who checks progress?** Both sender/receiver in real-time.
 - **AI features?** Not applicable—focus on secure P2P transfer.
@@ -38,7 +36,6 @@ These enable basic P2P transfers.
 | Encryption Indicator | Green lock/status | Visual E2E encryption confirmation | Builds trust/security assurance |
 | Receiver File Preview & Download | List incoming files, choose save location | Preview before accept | Controlled receiving, prevents surprises |
 
-![Room Share](X X - DOC MDS/Room Share.png) ![Incoming File](X X - DOC MDS/Incoming File.png)
 
 ### Nice-to-Have (Enhancements)
 Polish for production.
@@ -52,7 +49,6 @@ Polish for production.
 | Transfer History | Past rooms/files | Repeat usage | Convenience, no re-setup |
 | Transfer Analytics | Basic speed/progress summary | Post-transfer review | Data for improvements |
 
-![File Progression](X X - DOC MDS/File Progression.png) ![Transfer Complete](X X - DOC MDS/Transfer Complete.png)
 
 ## Ultimate Goal (Design Vision)
 
