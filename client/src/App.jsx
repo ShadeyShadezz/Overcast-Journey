@@ -368,7 +368,6 @@ export default function App() {
             </div>
           </section>
         )}
-        )}
 
         {mode === 'room' && (
           <section className="panel roomView">
